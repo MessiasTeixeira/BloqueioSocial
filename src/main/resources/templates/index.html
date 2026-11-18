@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bloqueio Social</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+
+    <style>
+        body {
+            min-height: 100vh;
+            margin: 0;
+            background:
+                radial-gradient(ellipse at 50% 0%, rgba(99, 102, 241, 0.13), transparent 55%),
+                #09090f;
+            color: #f4f4f5;
+            font-family: Arial, sans-serif;
+        }
+
+        .pagina-inicial {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 30px 20px;
+            box-sizing: border-box;
+        }
+
+        .conteudo-inicial {
+            width: 100%;
+            max-width: 680px;
+            text-align: center;
+        }
+
+        .marca {
+            display: inline-flex;
+            align-items: center;
+            gap: 9px;
+            margin-bottom: 38px;
+            color: #c4b5fd;
+            font-size: 14px;
+            font-weight: 600;
+            letter-spacing: 1px;
+        }
+
+        .marca-icone {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 34px;
+            height: 34px;
+            border-radius: 10px;
+            background: rgba(139, 92, 246, 0.15);
+            border: 1px solid rgba(167, 139, 250, 0.25);
+            font-size: 17px;
+        }
+
+        .etiqueta {
+            display: inline-block;
+            padding: 7px 13px;
+            margin-bottom: 22px;
+            border: 1px solid rgba(167, 139, 250, 0.2);
+            border-radius: 30px;
+            background: rgba(139, 92, 246, 0.08);
+            color: #c4b5fd;
+            font-size: 12px;
+            letter-spacing: 0.5px;
+        }
+
+        .conteudo-inicial h1 {
+            margin: 0;
+            font-size: clamp(38px, 7vw, 62px);
+            line-height: 1.1;
+            letter-spacing: -2px;
+            font-weight: 750;
+        }
+
+        .destaque {
+            color: #a78bfa;
+        }
+
+        .descricao-inicial {
+            max-width: 510px;
+            margin: 23px auto 32px;
+            color: #a1a1aa;
+            font-size: 16px;
+            line-height: 1.8;
+        }
+
+        .erro-inicial {
+            max-width: 450px;
+            margin: 0 auto 20px;
+            padding: 13px 16px;
+            border: 1px solid rgba(248, 113, 113, 0.25);
+            border-radius: 10px;
+            background: rgba(127, 29, 29, 0.2);
+            color: #fca5a5;
+            font-size: 14px;
+        }
+
+        .form-inicial {
+            margin: 0;
+        }
+
+        .botao-iniciar {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            min-width: 210px;
+            padding: 16px 25px;
+            border: none;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #8b5cf6, #6d4ae8);
+            color: white;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 8px 30px rgba(109, 74, 232, 0.22);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .botao-iniciar:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 35px rgba(109, 74, 232, 0.35);
+        }
+
+        .seta {
+            font-size: 19px;
+            transition: transform 0.2s;
+        }
+
+        .botao-iniciar:hover .seta {
+            transform: translateX(4px);
+        }
+
+        .rodape-inicial {
+            margin-top: 65px;
+            color: #71717a;
+            font-size: 12px;
+        }
+
+        .link-historico {
+            position: fixed;
+            top: 25px;
+            right: 30px;
+            padding: 10px 15px;
+            border: 1px solid #27272a;
+            border-radius: 9px;
+            color: #a1a1aa;
+            background: rgba(24, 24, 27, 0.7);
+            text-decoration: none;
+            font-size: 13px;
+            transition: color 0.2s, border-color 0.2s;
+        }
+
+        .link-historico:hover {
+            color: #c4b5fd;
+            border-color: #6d4ae8;
+        }
+
+        @media (max-width: 600px) {
+            .pagina-inicial {
+                padding: 90px 22px 30px;
+            }
+
+            .link-historico {
+                top: 18px;
+                right: 18px;
+            }
+
+            .marca {
+                margin-bottom: 30px;
+            }
+
+            .descricao-inicial {
+                font-size: 14px;
+            }
+
+            .rodape-inicial {
+                margin-top: 50px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <a class="link-historico" th:href="@{/historico}">
+        Histórico de senhas
+    </a>
+
+    <main class="pagina-inicial">
+
+        <section class="conteudo-inicial">
+
+            <div class="marca">
+                <span class="marca-icone">◈</span>
+                BLOQUEIO SOCIAL
+            </div>
+
+
+            <h1>
+                Recupere o controle
+                <span class="destaque">do seu tempo.</span>
+            </h1>
+
+            <p class="descricao-inicial">
+                Afaste-se das redes sociais e dedique seu tempo ao que realmente importa.
+                Escolha um período de concentração e deixe que o aplicativo cuide da sua senha
+                até o momento de voltar.
+            </p>
+
+            <div class="erro-inicial"
+                 th:if="${erro}"
+                 th:text="${erro}">
+            </div>
+
+            <form class="form-inicial" action="/gerar-senha" method="post">
+                <button class="botao-iniciar" type="submit">
+                    Começar concentração
+                    <span class="seta">→</span>
+                </button>
+            </form>
+        </section>
+
+    </main>
+
+</body>
+</html>

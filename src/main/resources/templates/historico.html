@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Histórico de senhas</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+
+    <style>
+        body {
+            min-height: 100vh;
+            margin: 0;
+            background:
+                radial-gradient(ellipse at 50% 0%, rgba(99, 102, 241, 0.10), transparent 55%),
+                #09090f;
+            color: #f4f4f5;
+            font-family: Arial, sans-serif;
+        }
+
+        .pagina-historico {
+            width: 100%;
+            max-width: 850px;
+            margin: 0 auto;
+            padding: 65px 25px 45px;
+            box-sizing: border-box;
+        }
+
+        .cabecalho-historico {
+            margin-bottom: 32px;
+        }
+
+        .marca {
+            display: inline-flex;
+            align-items: center;
+            gap: 9px;
+            margin-bottom: 25px;
+            color: #c4b5fd;
+            font-size: 13px;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+
+        .marca-icone {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+            border: 1px solid rgba(167, 139, 250, 0.25);
+            border-radius: 9px;
+            background: rgba(139, 92, 246, 0.15);
+        }
+
+        .cabecalho-historico h1 {
+            margin: 0 0 12px;
+            font-size: clamp(30px, 5vw, 40px);
+            letter-spacing: -1px;
+        }
+
+        .descricao {
+            margin: 0;
+            color: #a1a1aa;
+            font-size: 14px;
+            line-height: 1.7;
+        }
+
+        .mensagem {
+            padding: 13px 16px;
+            margin-bottom: 20px;
+            border-radius: 9px;
+            font-size: 14px;
+        }
+
+        .mensagem-sucesso {
+            border: 1px solid rgba(74, 222, 128, 0.2);
+            background: rgba(34, 197, 94, 0.08);
+            color: #86efac;
+        }
+
+        .mensagem-erro {
+            border: 1px solid rgba(248, 113, 113, 0.25);
+            background: rgba(127, 29, 29, 0.2);
+            color: #fca5a5;
+        }
+
+        .barra-acoes {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 18px;
+        }
+
+        .botao-excluir-todos {
+            padding: 10px 15px;
+            border: 1px solid rgba(248, 113, 113, 0.25);
+            border-radius: 9px;
+            background: rgba(127, 29, 29, 0.13);
+            color: #fca5a5;
+            font-size: 12px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s, border-color 0.2s;
+        }
+
+        .botao-excluir-todos:hover {
+            background: rgba(127, 29, 29, 0.3);
+            border-color: rgba(248, 113, 113, 0.5);
+        }
+
+        .lista-historico {
+            display: flex;
+            flex-direction: column;
+            gap: 13px;
+        }
+
+        .item-historico {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+            padding: 21px;
+            border: 1px solid #292932;
+            border-radius: 13px;
+            background: rgba(24, 24, 30, 0.85);
+            transition: border-color 0.2s, transform 0.2s;
+        }
+
+        .item-historico:hover {
+            border-color: #49405f;
+            transform: translateY(-1px);
+        }
+
+        .informacoes-historico {
+            display: flex;
+            flex-direction: column;
+            gap: 9px;
+            min-width: 0;
+        }
+
+        .informacoes-historico strong {
+            margin-bottom: 3px;
+            color: #e4e4e7;
+            font-size: 15px;
+        }
+
+        .informacoes-historico > span:not(.tipo-encerramento) {
+            color: #a1a1aa;
+            font-size: 13px;
+        }
+
+        .tipo-encerramento {
+            display: inline-block;
+            width: fit-content;
+            padding: 6px 10px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: bold;
+            margin-top: 3px;
+        }
+
+        .encerramento-natural {
+            background: rgba(34, 197, 94, 0.10);
+            color: #86efac;
+            border: 1px solid rgba(74, 222, 128, 0.15);
+        }
+
+        .encerramento-emergencial {
+            background: rgba(234, 88, 12, 0.10);
+            color: #fdba74;
+            border: 1px solid rgba(251, 146, 60, 0.2);
+        }
+
+        .acoes-historico {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            flex-shrink: 0;
+        }
+
+        .acoes-historico form {
+            margin: 0;
+        }
+
+        .botao-recuperar {
+            display: inline-block;
+            padding: 10px 13px;
+            border: 1px solid rgba(167, 139, 250, 0.25);
+            border-radius: 8px;
+            background: rgba(139, 92, 246, 0.10);
+            color: #c4b5fd;
+            font-size: 12px;
+            font-weight: bold;
+            text-decoration: none;
+            transition: background 0.2s;
+        }
+
+        .botao-recuperar:hover {
+            background: rgba(139, 92, 246, 0.22);
+        }
+
+        .botao-excluir {
+            width: 37px;
+            height: 37px;
+            border: 1px solid rgba(248, 113, 113, 0.2);
+            border-radius: 8px;
+            background: rgba(127, 29, 29, 0.12);
+            color: #fca5a5;
+            font-size: 15px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .botao-excluir:hover {
+            background: rgba(127, 29, 29, 0.35);
+        }
+
+        .historico-vazio {
+            padding: 55px 20px;
+            border: 1px dashed #3f3f46;
+            border-radius: 13px;
+            background: rgba(24, 24, 30, 0.55);
+            text-align: center;
+        }
+
+        .icone-vazio {
+            margin-bottom: 17px;
+            color: #8b5cf6;
+            font-size: 32px;
+        }
+
+        .historico-vazio strong {
+            display: block;
+            margin-bottom: 9px;
+            color: #e4e4e7;
+            font-size: 16px;
+        }
+
+        .historico-vazio p {
+            margin: 0;
+            color: #71717a;
+            font-size: 13px;
+        }
+
+        .link-voltar {
+            display: inline-block;
+            margin-top: 30px;
+            color: #a78bfa;
+            font-size: 13px;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .link-voltar:hover {
+            color: #c4b5fd;
+            text-decoration: underline;
+        }
+
+        @media (max-width: 600px) {
+            .pagina-historico {
+                padding: 35px 17px;
+            }
+
+            .item-historico {
+                align-items: flex-start;
+                flex-direction: column;
+                gap: 17px;
+                padding: 17px;
+            }
+
+            .acoes-historico {
+                width: 100%;
+            }
+
+            .botao-recuperar {
+                flex: 1;
+                text-align: center;
+            }
+
+            .barra-acoes {
+                justify-content: flex-start;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <main class="pagina-historico">
+
+        <header class="cabecalho-historico">
+
+            <div class="marca">
+                <span class="marca-icone">◈</span>
+                BLOQUEIO SOCIAL
+            </div>
+
+            <h1>Histórico de senhas</h1>
+
+            <p class="descricao">
+                Consulte e recupere as senhas utilizadas em suas concentrações anteriores.
+            </p>
+
+        </header>
+
+        <div
+            class="mensagem mensagem-sucesso"
+            th:if="${mensagem}"
+            th:text="${mensagem}">
+        </div>
+
+        <div
+            class="mensagem mensagem-erro"
+            th:if="${erro}"
+            th:text="${erro}">
+        </div>
+
+        <div class="barra-acoes">
+
+            <form
+                th:if="${!historico.isEmpty()}"
+                th:action="@{/historico/excluir-todos}"
+                method="post"
+                onsubmit="return confirm('ATENÇÃO! Tem certeza que deseja excluir TODO o histórico de senhas? Essa ação não poderá ser desfeita.');">
+
+                <button type="submit" class="botao-excluir-todos">
+                    Excluir todo o histórico
+                </button>
+
+            </form>
+
+        </div>
+
+        <div th:if="${historico.isEmpty()}" class="historico-vazio">
+
+            <div class="icone-vazio">◷</div>
+
+            <strong>Nenhum registro encontrado</strong>
+
+            <p>Suas concentrações anteriores aparecerão aqui.</p>
+
+        </div>
+
+        <div th:unless="${historico.isEmpty()}" class="lista-historico">
+
+            <div class="item-historico" th:each="registro : ${historico}">
+
+                <div class="informacoes-historico">
+
+                    <strong>Concentração</strong>
+
+                    <span>
+                        Início:
+                        <span th:text="${#temporals.format(registro.dataInicial, 'dd/MM/yyyy HH:mm')}"></span>
+                    </span>
+
+                    <span>
+                        Término planejado:
+                        <span th:text="${#temporals.format(registro.dataFinal, 'dd/MM/yyyy HH:mm')}"></span>
+                    </span>
+
+                    <span
+                        class="tipo-encerramento encerramento-emergencial"
+                        th:if="${registro.emergencial}">
+                        Saída de emergência
+                    </span>
+
+                    <span
+                        class="tipo-encerramento encerramento-natural"
+                        th:unless="${registro.emergencial}">
+                        Encerramento natural
+                    </span>
+
+                </div>
+
+                <div class="acoes-historico">
+
+                    <a class="botao-recuperar"
+                       th:href="@{/historico/{id}(id=${registro.id})}">
+                        Recuperar senha
+                    </a>
+
+                    <form
+                        th:action="@{/historico/{id}/excluir(id=${registro.id})}"
+                        method="post"
+                        onsubmit="return confirm('Tem certeza que deseja excluir esta senha do histórico?');">
+
+                        <button type="submit" class="botao-excluir">
+                            🗑
+                        </button>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <a class="link-voltar" th:href="@{/}">
+            ← Voltar
+        </a>
+
+    </main>
+
+</body>
+</html>

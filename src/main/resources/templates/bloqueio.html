@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bloqueio em andamento</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+
+    <style>
+        body {
+            min-height: 100vh;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 25px;
+            box-sizing: border-box;
+            background:
+                radial-gradient(ellipse at 50% 0%, rgba(99, 102, 241, 0.12), transparent 55%),
+                #09090f;
+            color: #f4f4f5;
+            font-family: Arial, sans-serif;
+        }
+
+        .pagina-bloqueio {
+            width: 100%;
+            max-width: 570px;
+            text-align: center;
+        }
+
+        .marca {
+            display: inline-flex;
+            align-items: center;
+            gap: 9px;
+            margin-bottom: 45px;
+            color: #c4b5fd;
+            font-size: 13px;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+
+        .marca-icone {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+            border: 1px solid rgba(167, 139, 250, 0.25);
+            border-radius: 9px;
+            background: rgba(139, 92, 246, 0.15);
+            font-size: 17px;
+        }
+
+        .icone-bloqueio {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 68px;
+            height: 68px;
+            margin: 0 auto 24px;
+            border: 1px solid rgba(167, 139, 250, 0.25);
+            border-radius: 20px;
+            background: rgba(139, 92, 246, 0.12);
+            color: #a78bfa;
+            font-size: 30px;
+        }
+
+        h1 {
+            margin: 0 0 13px;
+            font-size: clamp(29px, 5vw, 38px);
+            letter-spacing: -1px;
+        }
+
+        .descricao {
+            max-width: 410px;
+            margin: 0 auto 35px;
+            color: #a1a1aa;
+            font-size: 14px;
+            line-height: 1.7;
+        }
+
+        .cartao-contagem {
+            padding: 30px 22px;
+            border: 1px solid #30303a;
+            border-radius: 16px;
+            background: rgba(24, 24, 30, 0.9);
+        }
+
+        .rotulo-contagem {
+            display: block;
+            margin-bottom: 20px;
+            color: #a1a1aa;
+            font-size: 12px;
+            font-weight: bold;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .contagem {
+            color: #c4b5fd;
+            font-family: monospace;
+            font-size: clamp(27px, 6vw, 39px);
+            font-weight: bold;
+            letter-spacing: -1px;
+            overflow-wrap: anywhere;
+            text-shadow: 0 0 25px rgba(139, 92, 246, 0.18);
+        }
+
+        .separador {
+            width: 100%;
+            height: 1px;
+            margin: 25px 0;
+            background: #30303a;
+        }
+
+        .informacao-data {
+            color: #a1a1aa;
+            font-size: 13px;
+        }
+
+        .data {
+            display: block;
+            margin-top: 9px;
+            color: #e4e4e7;
+            font-size: 15px;
+            font-weight: bold;
+        }
+
+        .mensagem-incentivo {
+            margin: 25px 0 0;
+            color: #71717a;
+            font-size: 13px;
+            line-height: 1.7;
+        }
+
+        .erro {
+            padding: 13px 15px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(248, 113, 113, 0.25);
+            border-radius: 9px;
+            background: rgba(127, 29, 29, 0.2);
+            color: #fca5a5;
+            font-size: 13px;
+            text-align: left;
+        }
+
+        .link-emergencia {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            color: #71717a;
+            font-size: 12px;
+            text-decoration: none;
+            opacity: 0.65;
+            transition: opacity 0.2s, color 0.2s;
+        }
+
+        .link-emergencia:hover {
+            color: #fca5a5;
+            opacity: 1;
+            text-decoration: underline;
+        }
+
+        dialog {
+            width: min(90%, 440px);
+            max-width: 440px;
+            box-sizing: border-box;
+            padding: 28px;
+            margin: auto;
+            border: 1px solid #45404a;
+            border-radius: 16px;
+            background: #191920;
+            color: #f4f4f5;
+            box-shadow: 0 25px 80px rgba(0, 0, 0, 0.5);
+        }
+
+        dialog::backdrop {
+            background: rgba(0, 0, 0, 0.78);
+            backdrop-filter: blur(4px);
+        }
+
+        dialog h2 {
+            margin: 0 0 14px;
+            font-size: 22px;
+        }
+
+        dialog p {
+            color: #a1a1aa;
+            font-size: 13px;
+            line-height: 1.7;
+        }
+
+        .aviso-emergencia {
+            padding: 12px;
+            margin: 18px 0;
+            border: 1px solid rgba(248, 113, 113, 0.2);
+            border-radius: 8px;
+            background: rgba(127, 29, 29, 0.12);
+            color: #fca5a5 !important;
+            font-size: 12px !important;
+        }
+
+        .frase-confirmacao {
+            padding: 14px;
+            margin: 15px 0;
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            border-radius: 9px;
+            background: rgba(139, 92, 246, 0.10);
+            color: #c4b5fd;
+            font-size: 12px;
+            font-weight: bold;
+            line-height: 1.6;
+            text-align: center;
+        }
+
+        .campo-confirmacao {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 13px;
+            margin: 10px 0;
+            border: 1px solid #454550;
+            border-radius: 8px;
+            outline: none;
+            background: #101016;
+            color: #f4f4f5;
+            font-size: 13px;
+        }
+
+        .campo-confirmacao:focus {
+            border-color: #8b5cf6;
+        }
+
+        .botoes-modal {
+            display: flex;
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        .botoes-modal button {
+            flex: 1;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .botao-voltar {
+            border: 1px solid #454550;
+            background: transparent;
+            color: #d4d4d8;
+        }
+
+        .botao-voltar:hover {
+            background: #303039;
+        }
+
+        .botao-confirmar {
+            border: 1px solid rgba(248, 113, 113, 0.3);
+            background: rgba(127, 29, 29, 0.3);
+            color: #fca5a5;
+        }
+
+        .botao-confirmar:hover:not(:disabled) {
+            background: rgba(127, 29, 29, 0.5);
+        }
+
+        .botao-confirmar:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        @media (max-width: 480px) {
+            .cartao-contagem {
+                padding: 25px 15px;
+            }
+
+            .link-emergencia {
+                left: 0;
+                right: 0;
+                bottom: 12px;
+                text-align: center;
+            }
+
+            dialog {
+                padding: 22px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <main class="pagina-bloqueio">
+
+        <div class="marca">
+            <span class="marca-icone">◈</span>
+            BLOQUEIO SOCIAL
+        </div>
+
+
+        <h1>Bloqueio em andamento</h1>
+
+        <p class="descricao">
+            Suas senhas estão guardadas. Continue firme no seu objetivo
+            e aproveite esse período longe das redes sociais.
+        </p>
+
+        <div class="erro" th:if="${erro}" th:text="${erro}"></div>
+
+        <section class="cartao-contagem">
+
+            <span class="rotulo-contagem">
+                Sua senha será liberada em
+            </span>
+
+            <div
+                class="contagem"
+                id="contagem"
+                th:attr="data-final=${bloqueio.dataFinal}">
+                Carregando...
+            </div>
+
+            <div class="separador"></div>
+
+            <div class="informacao-data">
+                Data de término
+
+                <span
+                    class="data"
+                    th:text="${#temporals.format(bloqueio.dataFinal, 'dd/MM/yyyy HH:mm')}">
+                </span>
+            </div>
+
+        </section>
+
+        <p class="mensagem-incentivo">
+            Um passo de cada vez. Mantenha o foco no que realmente importa.
+        </p>
+
+    </main>
+
+    <a
+        href="#"
+        class="link-emergencia"
+        onclick="event.preventDefault(); abrirModalEmergencia();">
+        Precisa recuperar sua senha antecipadamente?
+    </a>
+
+    <dialog id="modalEmergencia">
+
+        <h2>Saída de emergência</h2>
+
+        <p>
+            Você está prestes a interromper seu período de concentração
+            antes do prazo estabelecido.
+        </p>
+
+        <p class="aviso-emergencia">
+            Atenção: essa ação encerrará o bloqueio imediatamente
+            e permitirá recuperar sua senha. Ela não poderá ser desfeita.
+        </p>
+
+        <p>
+            Para continuar, digite exatamente a frase abaixo:
+        </p>
+
+        <div class="frase-confirmacao">
+            EU DESEJO ENCERRAR MEU BLOQUEIO ANTECIPADAMENTE
+        </div>
+
+        <form action="/emergencia" method="post">
+
+            <input
+                type="text"
+                id="campoConfirmacao"
+                name="confirmacao"
+                class="campo-confirmacao"
+                placeholder="Digite a frase de confirmação"
+                autocomplete="off"
+                required
+            >
+
+            <div class="botoes-modal">
+
+                <button
+                    type="button"
+                    class="botao-voltar"
+                    onclick="fecharModalEmergencia()">
+                    Voltar
+                </button>
+
+                <button
+                    type="submit"
+                    id="botaoConfirmar"
+                    class="botao-confirmar"
+                    disabled>
+                    Confirmar emergência
+                </button>
+
+            </div>
+
+        </form>
+
+    </dialog>
+
+    <script>
+        const contador = document.getElementById("contagem");
+        const dataFinal = new Date(contador.dataset.final);
+
+        function atualizarContagem() {
+            const agora = new Date();
+            const diferenca = dataFinal.getTime() - agora.getTime();
+
+            if (diferenca <= 0) {
+                contador.innerText = "Prazo encerrado!";
+                window.location.reload();
+                return;
+            }
+
+            const segundosTotais = Math.floor(diferenca / 1000);
+
+            const dias = Math.floor(segundosTotais / 86400);
+            const horas = Math.floor((segundosTotais % 86400) / 3600);
+            const minutos = Math.floor((segundosTotais % 3600) / 60);
+            const segundos = segundosTotais % 60;
+
+            contador.innerText =
+                `${dias}d ${horas}h ${minutos}m ${segundos}s`;
+        }
+
+        atualizarContagem();
+        setInterval(atualizarContagem, 1000);
+
+        const fraseEsperada =
+            "EU DESEJO ENCERRAR MEU BLOQUEIO ANTECIPADAMENTE";
+
+        const campoConfirmacao =
+            document.getElementById("campoConfirmacao");
+
+        const botaoConfirmar =
+            document.getElementById("botaoConfirmar");
+
+        function abrirModalEmergencia() {
+            campoConfirmacao.value = "";
+            botaoConfirmar.disabled = true;
+
+            document.getElementById("modalEmergencia").showModal();
+        }
+
+        function fecharModalEmergencia() {
+            document.getElementById("modalEmergencia").close();
+        }
+
+        campoConfirmacao.addEventListener("input", function () {
+            botaoConfirmar.disabled =
+                this.value !== fraseEsperada;
+        });
+    </script>
+
+</body>
+</html>

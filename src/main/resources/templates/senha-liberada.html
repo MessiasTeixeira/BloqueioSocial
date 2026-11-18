@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bloqueio encerrado</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+
+    <style>
+        body {
+            min-height: 100vh;
+            margin: 0;
+            background:
+                radial-gradient(ellipse at 50% 0%, rgba(34, 197, 94, 0.09), transparent 55%),
+                #09090f;
+            color: #f4f4f5;
+            font-family: Arial, sans-serif;
+        }
+
+        .pagina-encerramento {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 35px 20px;
+            box-sizing: border-box;
+        }
+
+        .conteudo-encerramento {
+            width: 100%;
+            max-width: 560px;
+            text-align: center;
+        }
+
+        .icone-sucesso {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 72px;
+            height: 72px;
+            margin: 0 auto 25px;
+            border: 1px solid rgba(74, 222, 128, 0.25);
+            border-radius: 22px;
+            background: rgba(34, 197, 94, 0.10);
+            color: #4ade80;
+            font-size: 34px;
+        }
+
+        .etiqueta-sucesso {
+            display: inline-block;
+            padding: 7px 13px;
+            margin-bottom: 18px;
+            border: 1px solid rgba(74, 222, 128, 0.2);
+            border-radius: 30px;
+            background: rgba(34, 197, 94, 0.08);
+            color: #86efac;
+            font-size: 12px;
+            letter-spacing: 0.5px;
+        }
+
+        .conteudo-encerramento h1 {
+            margin: 0;
+            font-size: clamp(32px, 6vw, 44px);
+            letter-spacing: -1.5px;
+        }
+
+        .descricao-encerramento {
+            max-width: 440px;
+            margin: 16px auto 30px;
+            color: #a1a1aa;
+            font-size: 15px;
+            line-height: 1.8;
+        }
+
+        .cartao-senha {
+            padding: 23px;
+            margin-bottom: 20px;
+            border: 1px solid #30303a;
+            border-radius: 16px;
+            background: rgba(24, 24, 30, 0.85);
+            text-align: left;
+        }
+
+        .titulo-senha {
+            display: block;
+            margin-bottom: 13px;
+            color: #a1a1aa;
+            font-size: 12px;
+            font-weight: bold;
+            letter-spacing: 0.8px;
+            text-transform: uppercase;
+        }
+
+        .senha {
+            padding: 15px;
+            border: 1px solid #3f3f4b;
+            border-radius: 10px;
+            background: #111116;
+            color: #c4b5fd;
+            font-family: monospace;
+            font-size: 16px;
+            line-height: 1.6;
+            overflow-wrap: anywhere;
+            text-align: center;
+            user-select: text;
+        }
+
+        .botao-copiar {
+            width: 100%;
+            margin-top: 13px;
+            padding: 13px;
+            border: none;
+            border-radius: 10px;
+            background: #272334;
+            color: #c4b5fd;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .botao-copiar:hover {
+            background: #37304d;
+        }
+
+        .botao-nova-concentracao {
+            width: 100%;
+            padding: 15px;
+            border: none;
+            border-radius: 11px;
+            background: linear-gradient(135deg, #8b5cf6, #6d4ae8);
+            color: white;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 8px 25px rgba(109, 74, 232, 0.18);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .botao-nova-concentracao:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(109, 74, 232, 0.3);
+        }
+
+        .link-historico {
+            position: fixed;
+            top: 25px;
+            right: 30px;
+            padding: 10px 15px;
+            border: 1px solid #27272a;
+            border-radius: 9px;
+            color: #a1a1aa;
+            background: rgba(24, 24, 27, 0.7);
+            text-decoration: none;
+            font-size: 13px;
+            transition: color 0.2s, border-color 0.2s;
+        }
+
+        .link-historico:hover {
+            color: #c4b5fd;
+            border-color: #6d4ae8;
+        }
+
+        .rodape-encerramento {
+            margin-top: 28px;
+            color: #71717a;
+            font-size: 12px;
+        }
+
+        /* Modal */
+
+        dialog {
+            width: min(90%, 440px);
+            padding: 28px;
+            margin: auto;
+            border: 1px solid #3f4049;
+            border-radius: 16px;
+            background: #1b1c21;
+            color: #f4f4f5;
+            box-sizing: border-box;
+        }
+
+        dialog::backdrop {
+            background: rgba(0, 0, 0, 0.75);
+            backdrop-filter: blur(4px);
+        }
+
+        dialog h2 {
+            margin-top: 0;
+            margin-bottom: 16px;
+            font-size: 22px;
+        }
+
+        dialog p {
+            color: #a1a1aa;
+            line-height: 1.6;
+            margin-bottom: 18px;
+        }
+
+        .aviso {
+            padding: 16px;
+            margin-bottom: 20px;
+            border: 1px solid #a16207;
+            border-radius: 10px;
+            background: #292315;
+            color: #fcd34d;
+            font-size: 13px;
+            line-height: 1.7;
+        }
+
+        .confirmacao {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            margin-bottom: 22px;
+            color: #d4d4d8;
+            font-size: 13px;
+            line-height: 1.6;
+            cursor: pointer;
+        }
+
+        .confirmacao input {
+            width: auto;
+            margin: 3px 0 0;
+            accent-color: #8b5cf6;
+        }
+
+        .botoes-modal {
+            display: flex;
+            gap: 12px;
+        }
+
+        .botoes-modal button {
+            flex: 1;
+            padding: 12px;
+            border-radius: 9px;
+            font-size: 13px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .botao-voltar {
+            border: 1px solid #555661;
+            background: transparent;
+            color: #d4d4d8;
+        }
+
+        .botao-voltar:hover {
+            background: #303139;
+        }
+
+        .botao-continuar {
+            border: none;
+            background: #8b5cf6;
+            color: white;
+        }
+
+        .botao-continuar:hover:not(:disabled) {
+            background: #7c3aed;
+        }
+
+        button:disabled {
+            background: #45434f;
+            color: #999;
+            cursor: not-allowed;
+        }
+
+        @media (max-width: 600px) {
+            .pagina-encerramento {
+                padding: 90px 20px 35px;
+            }
+
+            .link-historico {
+                top: 18px;
+                right: 18px;
+            }
+
+            .cartao-senha {
+                padding: 18px;
+            }
+
+            .senha {
+                font-size: 14px;
+            }
+
+            dialog {
+                padding: 22px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <a class="link-historico" th:href="@{/historico}">
+        Histórico de senhas
+    </a>
+
+    <main class="pagina-encerramento">
+
+        <section class="conteudo-encerramento">
+
+            <div class="icone-sucesso">✓</div>
+
+            <h1>Bloqueio encerrado!</h1>
+
+            <p class="descricao-encerramento">
+                Seu período de concentração chegou ao fim.
+                Sua senha está disponível novamente.
+            </p>
+
+            <div class="cartao-senha">
+
+                <span class="titulo-senha">
+                    Sua senha recuperada
+                </span>
+
+                <div class="senha" id="senha" th:text="${senha}"></div>
+
+                <button
+                    type="button"
+                    class="botao-copiar"
+                    onclick="copiarSenha()">
+                    Copiar senha
+                </button>
+
+            </div>
+
+            <form action="/gerar-senha" method="post" style="margin: 0;">
+                <button
+                    type="button"
+                    class="botao-nova-concentracao"
+                    onclick="abrirConfirmacao()">
+                    Iniciar nova concentração →
+                </button>
+            </form>
+
+        </section>
+
+    </main>
+
+    <div id="mensagemCopiar" class="notificacao" role="status" aria-live="polite"></div>
+
+    <dialog id="modalConfirmacao">
+
+        <h2>Iniciar nova concentração?</h2>
+
+        <p>
+            Você está prestes a iniciar um novo ciclo de bloqueio.
+        </p>
+
+        <div class="aviso">
+            <strong>Atenção: sua senha atual será substituída.</strong>
+
+            <br><br>
+
+            Certifique-se de que já copiou e guardou sua senha atual.
+        </div>
+
+        <label class="confirmacao">
+            <input
+                type="checkbox"
+                id="senhaGuardada"
+                onchange="atualizarBotao()"
+            >
+
+            Já copiei e guardei minha senha atual.
+        </label>
+
+        <div class="botoes-modal">
+
+            <button
+                type="button"
+                class="botao-voltar"
+                onclick="fecharConfirmacao()">
+                Voltar
+            </button>
+
+            <button
+                type="button"
+                class="botao-continuar"
+                id="botaoContinuar"
+                onclick="confirmarNovaConcentracao()"
+                disabled>
+                Continuar
+            </button>
+
+        </div>
+
+    </dialog>
+
+    <script>
+        let temporizadorNotificacao;
+
+        function mostrarNotificacao(mensagem, sucesso) {
+            const notificacao = document.getElementById("mensagemCopiar");
+
+            clearTimeout(temporizadorNotificacao);
+
+            notificacao.textContent = mensagem;
+            notificacao.className = sucesso
+                ? "notificacao sucesso"
+                : "notificacao erro";
+
+            temporizadorNotificacao = setTimeout(() => {
+                notificacao.className = "notificacao";
+            }, 3000);
+        }
+
+        async function copiarSenha() {
+            const senha = document.getElementById("senha").innerText;
+
+            try {
+                await navigator.clipboard.writeText(senha);
+                mostrarNotificacao("Senha copiada com sucesso!", true);
+            } catch (erro) {
+                mostrarNotificacao("Não foi possível copiar a senha.", false);
+            }
+        }
+
+        function abrirConfirmacao() {
+            document.getElementById("modalConfirmacao").showModal();
+        }
+
+        function fecharConfirmacao() {
+            document.getElementById("modalConfirmacao").close();
+        }
+
+        function atualizarBotao() {
+            const checkbox = document.getElementById("senhaGuardada");
+            const botao = document.getElementById("botaoContinuar");
+
+            botao.disabled = !checkbox.checked;
+        }
+
+        function confirmarNovaConcentracao() {
+            const checkbox = document.getElementById("senhaGuardada");
+
+            if (!checkbox.checked) {
+                return;
+            }
+
+            document.querySelector("form").requestSubmit();
+        }
+    </script>
+
+</body>
+</html>

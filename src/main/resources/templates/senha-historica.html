@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Senha recuperada</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+
+    <style>
+        body {
+            min-height: 100vh;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 25px;
+            box-sizing: border-box;
+            background:
+                radial-gradient(ellipse at 50% 0%, rgba(99, 102, 241, 0.12), transparent 55%),
+                #09090f;
+            color: #f4f4f5;
+            font-family: Arial, sans-serif;
+        }
+
+        .pagina-senha {
+            width: 100%;
+            max-width: 510px;
+            text-align: center;
+        }
+
+        .marca {
+            display: inline-flex;
+            align-items: center;
+            gap: 9px;
+            margin-bottom: 35px;
+            color: #c4b5fd;
+            font-size: 13px;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+
+        .marca-icone {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+            border: 1px solid rgba(167, 139, 250, 0.25);
+            border-radius: 9px;
+            background: rgba(139, 92, 246, 0.15);
+            font-size: 17px;
+        }
+
+        .icone-senha {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 66px;
+            height: 66px;
+            margin: 0 auto 23px;
+            border: 1px solid rgba(167, 139, 250, 0.25);
+            border-radius: 20px;
+            background: rgba(139, 92, 246, 0.12);
+            color: #a78bfa;
+            font-size: 29px;
+        }
+
+        h1 {
+            margin: 0 0 13px;
+            font-size: clamp(28px, 5vw, 36px);
+            letter-spacing: -1px;
+        }
+
+        .descricao {
+            max-width: 410px;
+            margin: 0 auto 30px;
+            color: #a1a1aa;
+            font-size: 14px;
+            line-height: 1.7;
+        }
+
+        .cartao-senha {
+            padding: 22px;
+            border: 1px solid #30303a;
+            border-radius: 13px;
+            background: rgba(24, 24, 30, 0.9);
+            text-align: left;
+        }
+
+        .rotulo-senha {
+            display: block;
+            margin-bottom: 12px;
+            color: #a1a1aa;
+            font-size: 12px;
+            font-weight: bold;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        .senha {
+            overflow-wrap: anywhere;
+            padding: 16px;
+            border: 1px solid rgba(167, 139, 250, 0.2);
+            border-radius: 9px;
+            background: rgba(9, 9, 15, 0.75);
+            color: #ddd6fe;
+            font-family: monospace;
+            font-size: 15px;
+            line-height: 1.6;
+            user-select: all;
+        }
+
+        .botao-copiar {
+            width: 100%;
+            margin-top: 15px;
+            padding: 13px;
+            border: none;
+            border-radius: 9px;
+            background: linear-gradient(135deg, #7c3aed, #6366f1);
+            color: white;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: opacity 0.2s, transform 0.2s;
+        }
+
+        .botao-copiar:hover {
+            opacity: 0.9;
+            transform: translateY(-1px);
+        }
+
+        .aviso {
+            margin: 17px 0 0;
+            color: #71717a;
+            font-size: 12px;
+            line-height: 1.6;
+        }
+
+        .link-voltar {
+            display: inline-block;
+            margin-top: 27px;
+            color: #a78bfa;
+            font-size: 13px;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .link-voltar:hover {
+            color: #c4b5fd;
+            text-decoration: underline;
+        }
+
+        @media (max-width: 480px) {
+            .cartao-senha {
+                padding: 17px;
+            }
+
+            .senha {
+                font-size: 13px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <main class="pagina-senha">
+
+        <div class="marca">
+            <span class="marca-icone">◈</span>
+            BLOQUEIO SOCIAL
+        </div>
+
+        <h1>Senha recuperada</h1>
+
+        <p class="descricao">
+            Esta é uma senha utilizada em uma concentração anterior.
+            Você pode copiá-la e utilizá-la para recuperar sua conta.
+        </p>
+
+        <div class="cartao-senha">
+
+            <span class="rotulo-senha">Sua senha</span>
+
+            <div class="senha" id="senhaRecuperada" th:text="${senha}"></div>
+
+            <button
+                type="button"
+                class="botao-copiar"
+                onclick="copiarSenha()">
+                Copiar senha
+            </button>
+
+        </div>
+
+        <p class="aviso">
+            Guarde sua senha em um local seguro após copiá-la.
+        </p>
+
+        <a class="link-voltar" th:href="@{/historico}">
+            ← Voltar ao histórico
+        </a>
+
+        <div
+            id="mensagemCopiar"
+            class="notificacao"
+            role="status"
+            aria-live="polite">
+        </div>
+
+    </main>
+
+    <script>
+        let temporizadorNotificacao;
+
+        function mostrarNotificacao(mensagem, sucesso) {
+            const notificacao = document.getElementById("mensagemCopiar");
+
+            clearTimeout(temporizadorNotificacao);
+
+            notificacao.textContent = mensagem;
+            notificacao.className = sucesso
+                ? "notificacao sucesso"
+                : "notificacao erro";
+
+            temporizadorNotificacao = setTimeout(() => {
+                notificacao.className = "notificacao";
+            }, 3000);
+        }
+
+        async function copiarSenha() {
+            const senha = document.getElementById("senhaRecuperada").textContent;
+
+            try {
+                await navigator.clipboard.writeText(senha);
+                mostrarNotificacao("Senha copiada com sucesso!", true);
+            } catch (erro) {
+                mostrarNotificacao("Não foi possível copiar a senha.", false);
+            }
+        }
+    </script>
+
+</body>
+</html>
